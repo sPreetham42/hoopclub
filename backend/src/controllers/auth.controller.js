@@ -16,7 +16,9 @@ export const register = async (req, res, next) => {
       },
     });
 
-    res.json(user);
+    // Do not leak password hash to the client.
+    const { password: _password, ...safeUser } = user;
+    res.json(safeUser);
   } catch (err) {
     next(err);
   }
@@ -42,7 +44,9 @@ export const login = async (req, res, next) => {
 
     const token = generateToken(user.id);
 
-    res.json({ user, token });
+    // Do not leak password hash to the client.
+    const { password: _password, ...safeUser } = user;
+    res.json({ user: safeUser, token });
   } catch (err) {
     next(err);
   }

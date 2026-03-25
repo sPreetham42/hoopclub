@@ -12,8 +12,13 @@ model User {
   username  String
   email     String    @unique
   password  String
+  avatarUrl String?
+  bio       String?
+  team      String?
+  position  String?
   posts     Post[]
   comments  Comment[]
+  likes     Like[]
   createdAt DateTime  @default(now())
 }
 
@@ -21,9 +26,11 @@ model Post {
   id        Int       @id @default(autoincrement())
   title     String
   content   String
+  media     Json?
   authorId  Int
   author    User      @relation(fields: [authorId], references: [id])
   comments  Comment[]
+  likes     Like[]
   createdAt DateTime  @default(now())
 }
 
@@ -35,6 +42,17 @@ model Comment {
   post      Post     @relation(fields: [postId], references: [id])
   author    User     @relation(fields: [authorId], references: [id])
   createdAt DateTime @default(now())
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  postId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, postId])
 }
 
 model Event {
