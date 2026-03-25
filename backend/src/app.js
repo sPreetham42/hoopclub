@@ -22,7 +22,10 @@ const app = express();
   //res.send("Backend is running");
 //});
 
-app.use(cors());
+app.use(cors({
+  origin: "https://hoopclub-a9yf4hq35-spreetham42s.vercel.app/",
+  credentials: true
+}));
 app.use(express.json());
 
 // Serve uploaded media files.
