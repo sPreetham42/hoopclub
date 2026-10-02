@@ -3,7 +3,23 @@ import { randomInt } from 'crypto';
 import fs from 'fs';
 
 // Configuration
-const RUN_PROBABILITY = parseInt(process.env.RUN_PROBABILITY || '40', 10);
+const rawProb = process.env.RUN_PROBABILITY;
+let RUN_PROBABILITY = 40;
+
+if (rawProb !== undefined && rawProb !== '') {
+  if (!/^-?\d+$/.test(rawProb)) {
+    console.error(`[automation] Error: RUN_PROBABILITY must be an integer between 0 and 100. Received: ${rawProb}`);
+    process.exit(1);
+  }
+  
+  RUN_PROBABILITY = parseInt(rawProb, 10);
+  
+  if (RUN_PROBABILITY < 0 || RUN_PROBABILITY > 100) {
+    console.error(`[automation] Error: RUN_PROBABILITY must be between 0 and 100. Received: ${RUN_PROBABILITY}`);
+    process.exit(1);
+  }
+}
+
 const DRY_RUN = process.env.DRY_RUN === 'true';
 
 console.log('[automation] Scheduled run started');
