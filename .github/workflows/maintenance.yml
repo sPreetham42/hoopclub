@@ -1,0 +1,35 @@
+name: Randomized Maintenance
+
+on:
+  schedule:
+    - cron: '0 3 * * *' # Run at 3 AM UTC every day
+  workflow_dispatch: # Allow manual trigger for testing
+
+jobs:
+  maintenance:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Needed to push commits
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Install dependencies
+        run: |
+          cd backend && npm ci
+          cd ../frontend && npm ci
+
+      - name: Run randomized maintenance
+        env:
+          RUN_PROBABILITY: 40
+        run: node .github/scripts/random_maintenance.js
